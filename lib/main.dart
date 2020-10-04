@@ -28,7 +28,6 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  int questionNumber = 0;
   List<Icon> scoreKeeper = [];
 
   @override
@@ -43,10 +42,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                quizBrain
-                    .questionsBank[
-                        questionNumber % quizBrain.questionsBank.length]
-                    .questionText,
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -70,19 +66,8 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain
-                    .questionsBank[
-                        questionNumber % quizBrain.questionsBank.length]
-                    .questionAnswer;
-                if (correctAnswer == true) {
-                  print('Correct!');
-                } else {
-                  print('Wrong!');
-                }
-                //The user picked true.
-                setState(() {
-                  questionNumber++;
-                });
+                // User picked True
+                checkAnswer(true);
               },
             ),
           ),
@@ -100,19 +85,8 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain
-                    .questionsBank[
-                        questionNumber % quizBrain.questionsBank.length]
-                    .questionAnswer;
-                if (correctAnswer == false) {
-                  print('Correct!');
-                } else {
-                  print('Wrong!');
-                }
-                //The user picked true.
-                setState(() {
-                  questionNumber++;
-                });
+                // User picked False
+                checkAnswer(false);
               },
             ),
           ),
@@ -122,6 +96,24 @@ class _QuizPageState extends State<QuizPage> {
         )
       ],
     );
+  }
+
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getQuestionAnswer();
+    setState(() {
+      if (correctAnswer == userPickedAnswer) {
+        scoreKeeper.add(Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+      } else {
+        scoreKeeper.add(Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+      quizBrain.nextQuestion();
+    });
   }
 }
 
